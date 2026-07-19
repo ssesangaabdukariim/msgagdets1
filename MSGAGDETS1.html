@@ -658,15 +658,284 @@
         </main>
     </div>
 
-    <!-- Additional modals and scripts (truncated for space - using the original content) -->
+    <!-- ==================== MODAL: ADD/EDIT PRODUCT ==================== -->
+    <div id="product-modal" class="fixed inset-0 bg-brand-950/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden transform transition-all">
+            <div class="bg-brand-950 text-white px-6 py-4 flex justify-between items-center">
+                <h3 id="modal-product-title" class="font-bold text-base">Add New Item</h3>
+                <button onclick="closeProductModal()" class="text-brand-300 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="product-form" onsubmit="saveProduct(event)" class="p-6 space-y-4 text-sm">
+                <input type="hidden" id="prod-id">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Device Brand Name</label>
+                        <input type="text" id="prod-brand" required placeholder="e.g., Apple, Samsung" class="w-full bg-violet-50/30 border border-violet-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Model Name / Number</label>
+                        <input type="text" id="prod-model" required placeholder="e.g., iPhone 15 Pro, S24 Ultra" class="w-full bg-violet-50/30 border border-violet-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Quantity Available</label>
+                        <input type="number" id="prod-quantity" oninput="calculateAutoFinalPrice()" required min="1" value="1" class="w-full bg-violet-50/30 border border-violet-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Units Format</label>
+                        <select id="prod-units" class="w-full bg-violet-50/30 border border-violet-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-brand-500 text-brand-950 font-medium">
+                            <option value="PCS">PCS</option>
+                            <option value="SET/KIT">SET/KIT</option>
+                            <option value="PACK/BOX">PACK/BOX</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Buying / Cost (Unit) (UGX)</label>
+                        <input type="number" id="prod-cost" oninput="calculateAutoFinalPrice()" required min="1" class="w-full bg-violet-50/30 border border-violet-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Total Shipment Transport (UGX)</label>
+                        <input type="number" id="prod-transport" oninput="calculateAutoFinalPrice()" required min="0" value="0" class="w-full bg-violet-50/30 border border-violet-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Auto-Final Unit Cost</label>
+                        <input type="number" id="prod-finalprice" readonly placeholder="Auto Calculated" class="w-full bg-violet-100 border border-violet-200 text-brand-950 rounded-lg px-3 py-2 font-bold outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Selling (per unit) (UGX)</label>
+                        <input type="number" id="prod-selling" required min="1" class="w-full bg-violet-50/30 border border-violet-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-4 border-t border-violet-100">
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 border border-violet-200 rounded-lg text-slate-600 text-xs font-semibold">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: QUICK REGISTER DEBTOR ==================== -->
+    <div id="debtor-modal" class="fixed inset-0 bg-brand-950/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-sm w-full shadow-2xl overflow-hidden transform transition-all">
+            <div class="bg-brand-950 text-white px-6 py-4 flex justify-between items-center">
+                <h3 class="font-bold text-base">Quick Register Debtor</h3>
+                <button onclick="closeQuickDebtorModal()" class="text-brand-300 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="saveQuickDebtor(event)" class="p-6 space-y-4 text-sm">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Debtor Sequence ID (Auto D1-D100)</label>
+                    <input type="text" id="quick-debtor-id-preview" readonly class="w-full bg-violet-100 border border-violet-200 rounded-lg px-3 py-2 outline-none font-mono font-bold text-brand-950">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Debtor's Full Name</label>
+                    <input type="text" id="quick-debtor-name" required placeholder="e.g., Kato Ronald" class="w-full bg-violet-50/30 border border-violet-200 rounded-lg px-3 py-2 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Contact Phone Number</label>
+                    <input type="text" id="quick-debtor-phone" required placeholder="e.g., 256701976529" class="w-full bg-violet-50/30 border border-violet-200 rounded-lg px-3 py-2 outline-none">
+                </div>
+                <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                    <p class="text-[10px] text-amber-700 leading-normal">⚠️ <strong>Note:</strong> Debts record money owed for unpaid inventory. General ledger records will map automatic credit checkouts.</p>
+                </div>
+                <div class="flex justify-end space-x-2 pt-4 border-t border-violet-100">
+                    <button type="button" onclick="closeQuickDebtorModal()" class="px-4 py-2 border border-violet-200 rounded-lg text-slate-600 text-xs">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold">Register Debtor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: DEBTOR PAYMENTS & CREDIT BALANCES ==================== -->
+    <div id="debt-pay-modal" class="fixed inset-0 bg-brand-950/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden transform transition-all">
+            <div class="bg-brand-950 text-white px-6 py-4 flex justify-between items-center">
+                <div>
+                    <h3 id="debt-audit-title" class="font-bold text-base">Process Settlement Payment</h3>
+                    <p id="debt-audit-subtitle" class="text-[11px] text-brand-300 font-mono">Outstanding: UGX 0</p>
+                </div>
+                <button onclick="closeDebtPayModal()" class="text-brand-300 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-6 space-y-4 text-sm">
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-slate-600">Choose Credit Purchase Entry</label>
+                    <select id="debt-pay-invoice-select" onchange="autoFillDebtAmount()" class="w-full bg-violet-50/30 border border-violet-200 rounded-lg px-3 py-1.5 text-xs outline-none text-brand-950 font-semibold">
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+
+                <form onsubmit="postInstallmentPayment(event)" class="space-y-3 bg-violet-50/50 p-4 rounded-xl border border-violet-200">
+                    <input type="hidden" id="debt-pay-id">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Amount to Pay Now (UGX)</label>
+                        <input type="number" id="debt-pay-amount" required min="100" class="w-full border border-violet-200 rounded-lg px-3 py-2 text-sm outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-accent-600 hover:bg-accent-700 text-white font-bold py-2 rounded-lg text-xs transition-colors">
+                        Process Settle to Sales Log
+                    </button>
+                </form>
+
+                <div class="space-y-2">
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-slate-500">Account Log History</h4>
+                    <div id="debt-pay-history" class="border border-violet-100 rounded-lg max-h-48 overflow-y-auto divide-y divide-violet-100 text-xs">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: RECEIPT VIEW ARCHIVE & SALES RETURN ==================== -->
+    <div id="receipt-modal" class="fixed inset-0 bg-brand-950/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-sm w-full shadow-2xl overflow-hidden transform transition-all relative">
+            <div class="p-6 space-y-4">
+                <div id="receipt-print-area" class="bg-amber-50/20 border border-dashed border-violet-300 p-4 rounded-lg text-xs font-mono text-slate-800 space-y-2">
+                    <!-- Dynamic Receipt Content -->
+                </div>
+
+                <!-- RESTORED RECEIPT ACTIONS TERMINAL PANEL -->
+                <div class="grid grid-cols-4 gap-2 pt-1">
+                    <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white p-2 rounded flex flex-col items-center justify-center text-[10px] font-bold transition-all">
+                        <i data-lucide="printer" class="w-4 h-4 mb-1"></i> Print
+                    </button>
+                    <button onclick="shareReceiptViaChannel('whatsapp')" class="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded flex flex-col items-center justify-center text-[10px] font-bold transition-all">
+                        <i data-lucide="share-2" class="w-4 h-4 mb-1"></i> WhatsApp
+                    </button>
+                    <button onclick="shareReceiptViaChannel('sms')" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded flex flex-col items-center justify-center text-[10px] font-bold transition-all">
+                        <i data-lucide="message-square" class="w-4 h-4 mb-1"></i> SMS
+                    </button>
+                    <button onclick="shareReceiptViaChannel('email')" class="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded flex flex-col items-center justify-center text-[10px] font-bold transition-all">
+                        <i data-lucide="mail" class="w-4 h-4 mb-1"></i> Email
+                    </button>
+                </div>
+                
+                <!-- SALES RETURN CONTROLLER FEATURE -->
+                <div class="bg-rose-50 border border-rose-200 p-3 rounded-lg space-y-2">
+                    <div class="flex items-center gap-1.5 text-xs font-bold text-rose-800">
+                        <i data-lucide="undo-2" class="w-4 h-4"></i> Sales Return & Restock Feature
+                    </div>
+                    <p class="text-[10px] text-rose-700 leading-snug">Select item in this sold receipt to initiate a partial or complete return. Returned stock instantly updates Table 1 & Table 2 inventory balances.</p>
+                    <div class="flex gap-2">
+                        <select id="return-item-select" class="flex-grow bg-white border border-rose-300 rounded text-[11px] p-1 text-slate-800 outline-none">
+                            <!-- Items populated dynamically -->
+                        </select>
+                        <input type="number" id="return-item-qty" min="1" value="1" class="w-12 bg-white border border-rose-300 rounded text-center text-[11px] p-1 font-bold outline-none text-rose-800">
+                        <button onclick="processSalesReturn()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2 py-1 rounded text-[10px] transition-colors">
+                            Return
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-2 border-t border-violet-100">
+                    <button onclick="closeReceiptModal()" class="w-full bg-brand-950 hover:bg-brand-900 text-white font-bold py-2 rounded-xl text-xs transition-all">
+                        Dismiss Receipt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: SYSTEM USER ADD/EDIT ==================== -->
+    <div id="user-modal" class="fixed inset-0 bg-brand-950/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-sm w-full shadow-2xl overflow-hidden transform transition-all">
+            <div class="bg-brand-950 text-white px-6 py-4 flex justify-between items-center">
+                <h3 id="modal-user-title" class="font-bold text-base">Create System User</h3>
+                <button onclick="closeUserModal()" class="text-brand-300 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="user-form" onsubmit="saveUser(event)" class="p-6 space-y-4 text-sm">
+                <input type="hidden" id="user-edit-id">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Employee Full Name</label>
+                    <input type="text" id="user-fullname" required placeholder="e.g., Kato Peter" class="w-full border border-violet-200 rounded-lg px-3 py-2 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">System Login Username</label>
+                    <input type="text" id="user-username" required placeholder="e.g., peterk" class="w-full border border-violet-200 rounded-lg px-3 py-2 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Security Password</label>
+                    <input type="password" id="user-password" required class="w-full border border-violet-200 rounded-lg px-3 py-2 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Security Access Role</label>
+                    <select id="user-role" class="w-full border border-violet-200 rounded-lg px-3 py-2 outline-none">
+                        <option value="User">Standard User (POS + Chats Only)</option>
+                        <option value="Admin">Administrator (Full Access)</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2 pt-4 border-t border-violet-100">
+                    <button type="button" onclick="closeUserModal()" class="px-4 py-2 border border-violet-200 rounded-lg text-slate-600 text-xs">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold">Save Access Credentials</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== SECRET DEVELOPER CONTROL PANEL MODAL ==================== -->
+    <div id="dev-panel-modal" class="fixed inset-0 bg-brand-950/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-brand-900 text-violet-100 border border-brand-500 rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden">
+            <div class="bg-brand-950 px-6 py-4 flex justify-between items-center border-b border-brand-800">
+                <h3 class="font-bold text-base text-brand-300 flex items-center gap-2">
+                    <i data-lucide="terminal" class="w-5 h-5"></i> Sahel Software - Developer Administration Portal
+                </h3>
+                <button onclick="closeDevPanel()" class="text-brand-300 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <div id="dev-login-area" class="p-6 space-y-4">
+                <div class="text-xs text-brand-200">Enter secure bypass credentials to unlock developer editing and administrative controls.</div>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-brand-300 mb-1">Developer ID</label>
+                        <input type="text" id="dev-username" class="w-full bg-brand-950 border border-brand-800 rounded-lg px-3 py-2 text-sm outline-none text-brand-300 font-mono" placeholder="muhammadjunior143">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-brand-300 mb-1">Developer Token Key</label>
+                        <input type="password" id="dev-password" class="w-full bg-brand-950 border border-brand-800 rounded-lg px-3 py-2 text-sm outline-none text-brand-300 font-mono" placeholder="Password">
+                    </div>
+                    <button onclick="authenticateDev()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-2 rounded-lg text-sm transition-all">
+                        Validate Dev Session & Unlock App Update Controls
+                    </button>
+                </div>
+            </div>
+
+            <div id="dev-dashboard-area" class="hidden p-6 space-y-4">
+                <div class="text-xs text-accent-500 font-mono">Status: Developer Authorization Granted | Bypass Mode Active</div>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="seedDevDemoData()" class="p-3 bg-brand-950 hover:bg-brand-800 border border-brand-800 rounded-xl text-left text-xs font-mono space-y-1">
+                        <div class="font-bold text-brand-300">⚡ Seed Test Records</div>
+                        <div class="text-[10px] text-slate-400">Generates simulated transactions & audits instantly.</div>
+                    </button>
+                    <button onclick="wipeCompleteDatabases()" class="p-3 bg-rose-950 hover:bg-rose-900 border border-rose-900 rounded-xl text-left text-xs font-mono space-y-1">
+                        <div class="font-bold text-rose-400">🔥 Clear All Data</div>
+                        <div class="text-[10px] text-slate-400">Resets system back to initial seed defaults.</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Footer -->
+    <footer class="bg-brand-950 text-brand-300 text-[10px] border-t border-brand-900 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left sm:flex sm:justify-between sm:items-center space-y-4 sm:weight-0">
+            <div>
+                <p class="font-bold text-white text-xs" id="footer-biz-name">MS-GADGETS</p>
+                <p>Contact Office: <span class="text-accent-500 font-medium" id="footer-biz-phone">0701976529</span></p>
+                <p>Location: <span class="text-slate-300" id="footer-biz-address">Kampala, Uganda</span></p>
+            </div>
+            <div class="text-brand-400">
+                <p>Engineered & Maintained by:</p>
+                <p class="font-semibold text-white">Shahel and T Qrab Software Hub</p>
+                <p>Support Lines: <span class="text-accent-500 font-medium">0709017275</span> / <span class="text-accent-500 font-medium">0744902535</span></p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Database Engine & Client Scripts -->
     <script>
-        // [Complete JavaScript code from MSGAGDETS1.html will be included here]
-        // Due to length constraints, the full JavaScript is already embedded in the file you provided
-        // This section will load all the app functionality
-        
-        // Include all the JavaScript from the original MSGAGDETS1.html file here
+        // LocalStorage state configuration
         let state = {
             users: [],
             products: [],
@@ -685,36 +954,283 @@
             activeChatUserId: "lobby"
         };
 
+        let devClicks = 0;
+        let lastSelectedReceipt = null;
+
         function initApp() {
             if (localStorage.getItem('ms_wholesale_complete_v2')) {
                 state = JSON.parse(localStorage.getItem('ms_wholesale_complete_v2'));
                 if (!state.auditTrail) state.auditTrail = [];
                 if (!state.sales) state.sales = [];
                 if (!state.cart) state.cart = [];
+                if (state.profile.name === "MS WHOLESALE HUB") {
+                    state.profile.name = "MS-GADGETS";
+                }
             } else {
                 state.users = [
                     { id: "u_admin", fullname: "Main Admin Owner", username: "admin", password: "123", role: "Admin" },
                     { id: "u_user1", fullname: "Employee Cashier", username: "user", password: "123", role: "User" }
                 ];
+
                 state.products = [
                     { id: "p1", brand: "Samsung", model: "Galaxy S24 Ultra", units: "PCS", quantity: 15, cost: 3400000, transport: 150000, finalprice: 3550000, selling: 4200000 },
                     { id: "p2", brand: "Apple", model: "iPhone 15 Pro Max", units: "PCS", quantity: 12, cost: 3800000, transport: 120000, finalprice: 3920000, selling: 4700000 },
                     { id: "p3", brand: "Sony", model: "WH-1000XM5 Headset", units: "PCS", quantity: 8, cost: 1100000, transport: 40000, finalprice: 1140000, selling: 1450000 }
                 ];
+
+                state.debtors = [
+                    { 
+                        id: "D1", 
+                        name: "Peter Mukasa", 
+                        phone: "256701976529", 
+                        balance: 0, 
+                        reservedBalance: 0,
+                        dateAdded: "2026-07-01", 
+                        pendingInvoices: [],
+                        history: []
+                    }
+                ];
+
+                state.chats = [
+                    { id: "c1", sender: "System", senderName: "MS-GADGETS", text: "Welcome to the central communications dashboard!", timestamp: new Date().toLocaleTimeString(), userSession: "lobby" }
+                ];
+
+                state.auditTrail = [
+                    { id: "a1", action: "SYSTEM_INITIALIZED", user: "System Engine", timestamp: new Date().toLocaleString(), details: "Database schemas seeded successfully." }
+                ];
+
                 saveState();
             }
+
+            // Global Auto-Logout Event Listener
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'hidden') {
+                    if (state.currentUser) {
+                        handleLogout();
+                    }
+                }
+            });
+
             checkAuthentication();
             applyBrandConfiguration();
+            writeAudit("SYSTEM_READY", "Application system initialized and rendered successfully.");
         }
 
         function saveState() {
             localStorage.setItem('ms_wholesale_complete_v2', JSON.stringify(state));
         }
 
+        function clearAuditTrailLogs() {
+            if (state.currentUser && state.currentUser.role === 'Admin') {
+                if (confirm("Are you sure you want to completely clear the system audit trail logs?")) {
+                    state.auditTrail = [];
+                    saveState();
+                    renderAuditTrailList();
+                    showToast("Audit trail logs successfully cleared by admin.");
+                }
+            } else {
+                showToast("Unauthorized. Only the administrator can clear audit logs.", "error");
+            }
+        }
+
+        function writeAudit(action, details) {
+            const auditEntry = {
+                id: 'AUD-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+                action: action,
+                user: state.currentUser ? state.currentUser.fullname : "System Anonymous",
+                timestamp: new Date().toLocaleString(),
+                details: details
+            };
+            state.auditTrail.unshift(auditEntry);
+            saveState();
+            
+            if (state.currentUser && state.currentUser.role === 'Admin') {
+                renderAuditTrailList();
+            }
+        }
+
+        function renderAuditTrailList() {
+            const logsContainer = document.getElementById('audit-trail-logs');
+            if (!logsContainer) return;
+            
+            logsContainer.innerHTML = '';
+            if (state.auditTrail.length === 0) {
+                logsContainer.innerHTML = `<div class="text-slate-400 text-center py-8">No action logs found.</div>`;
+                return;
+            }
+
+            state.auditTrail.forEach(log => {
+                const div = document.createElement('div');
+                div.className = "bg-violet-50/50 p-2.5 rounded-lg border border-violet-100 flex flex-col gap-1 hover:bg-violet-100/50 transition-colors";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-brand-950 tracking-wide bg-brand-100 px-1.5 py-0.5 rounded text-[10px]">${log.action}</span>
+                        <span class="text-[9px] text-slate-400 font-medium">${log.timestamp}</span>
+                    </div>
+                    <p class="text-slate-700 leading-normal text-[11px]">${log.details}</p>
+                    <div class="text-[9px] text-brand-600 font-semibold self-end">Triggered by: ${log.user}</div>
+                `;
+                logsContainer.appendChild(div);
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast max-w-sm flex items-center gap-3 p-4 rounded-xl text-xs font-semibold shadow-xl border ${
+                type === 'success' ? 'bg-accent-700 text-white border-accent-600' : 
+                type === 'error' ? 'bg-rose-950 text-rose-100 border-rose-800' : 'bg-brand-950 text-brand-100 border-brand-800'
+            } pointer-events-auto`;
+            
+            const icons = {
+                success: 'check-circle',
+                error: 'alert-triangle',
+                info: 'info'
+            };
+
+            toast.innerHTML = `
+                <i data-lucide="${icons[type]}" class="w-5 h-5 flex-shrink-0"></i>
+                <div class="flex-grow">${message}</div>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-all', 'duration-500');
+                setTimeout(() => toast.remove(), 500);
+            }, 3500);
+        }
+
+        function handleDevClick() {
+            devClicks++;
+            if (devClicks === 6) {
+                devClicks = 0;
+                openDevPanel();
+                showToast("Bypass security protocol triggered. Enter developer credentials.", "info");
+            }
+        }
+
+        function openDevPanel() {
+            document.getElementById('dev-panel-modal').classList.remove('hidden');
+        }
+        function closeDevPanel() {
+            document.getElementById('dev-panel-modal').classList.add('hidden');
+            document.getElementById('dev-login-area').classList.remove('hidden');
+            document.getElementById('dev-dashboard-area').classList.add('hidden');
+            document.getElementById('dev-username').value = '';
+            document.getElementById('dev-password').value = '';
+        }
+
+        function authenticateDev() {
+            const u = document.getElementById('dev-username').value.trim();
+            const p = document.getElementById('dev-password').value;
+
+            if (u === "muhammadjunior143" && p === "Sahel156.") {
+                document.getElementById('dev-login-area').classList.add('hidden');
+                document.getElementById('dev-dashboard-area').classList.remove('hidden');
+                showToast("Developer authentication successful.");
+                writeAudit("DEV_CONSOLE_UNLOCKED", "Developer bypass session unlocked.");
+            } else {
+                showToast("Access Denied. Dev token validation failed.", "error");
+            }
+        }
+
+        function seedDevDemoData() {
+            state.sales.unshift({
+                id: 'REC-' + Math.floor(Math.random() * 90000 + 10000),
+                servedBy: "Developer Session",
+                buyer: "Simulated Test Client",
+                items: [{ id: "p1", brand: "Samsung", model: "Galaxy S24 Ultra", units: "PCS", qty: 1, selling: 4200000, cost: 3400000 }],
+                revenue: 4200000,
+                profit: 650000,
+                paymentType: "Cash",
+                amountGiven: 4200000,
+                changeDue: 0,
+                timestamp: new Date().toLocaleString()
+            });
+            saveState();
+            renderViewByTab('sales');
+            showToast("Simulated test transactional ledger record appended.");
+            writeAudit("DEMO_DATA_SEEDED", "Appended test transactions to the database logs.");
+        }
+
+        function wipeCompleteDatabases() {
+            if (confirm("Execute hard purge?")) {
+                localStorage.removeItem('ms_wholesale_complete_v2');
+                state = {};
+                initApp();
+                showToast("System database wiped clean.");
+                closeDevPanel();
+                writeAudit("DATABASE_PURGED", "The operational database was completely initialized and wiped.");
+            }
+        }
+
+        function triggerDefaultSystemReset() {
+            const promptPassword = prompt("A master authorization key is required. Please enter security password:");
+            if (promptPassword === "Sahel156.") {
+                // Wipe all sample structural data to make the website clean and brand new
+                state.products = [];
+                state.debtors = [];
+                state.sales = [];
+                state.chats = [];
+                state.cart = [];
+                state.auditTrail = [];
+                
+                // Retain essential system credentials so the app remains accessible
+                if (!state.users || state.users.length === 0) {
+                    state.users = [
+                        { id: "u_admin", fullname: "Main Admin Owner", username: "admin", password: "123", role: "Admin" },
+                        { id: "u_user1", fullname: "Employee Cashier", username: "user", password: "123", role: "User" }
+                    ];
+                }
+                
+                saveState();
+                showToast("All data purged. Website is now brand new and empty.", "success");
+                
+                // Forces safe user visibility sync
+                handleLogout();
+            } else if (promptPassword !== null) {
+                showToast("Reset aborted. The master key provided was invalid.", "error");
+            }
+        }
+
+        function calculateAutoFinalPrice() {
+            const cost = parseFloat(document.getElementById('prod-cost').value) || 0;
+            const transport = parseFloat(document.getElementById('prod-transport').value) || 0;
+            const finalPrice = Math.round(cost + transport);
+            document.getElementById('prod-finalprice').value = finalPrice;
+        }
+
+        function applyBrandConfiguration() {
+            const p = state.profile;
+            document.getElementById('login-title').textContent = p.name;
+            document.getElementById('header-biz-name').textContent = p.name;
+            document.getElementById('header-biz-contact').textContent = "Contact: " + p.phone;
+            document.getElementById('footer-biz-name').textContent = p.name;
+            document.getElementById('footer-biz-phone').textContent = p.phone;
+            document.getElementById('footer-biz-address').textContent = p.address;
+
+            if (document.getElementById('setup-biz-name')) {
+                document.getElementById('setup-biz-name').value = p.name;
+                document.getElementById('setup-biz-phone').value = p.phone;
+                document.getElementById('setup-biz-address').value = p.address;
+                document.getElementById('setup-biz-logo').value = p.logo;
+            }
+
+            const logoEl = document.getElementById('app-logo');
+            logoEl.setAttribute('data-lucide', p.logo || 'smartphone');
+            lucide.createIcons();
+        }
+
         function checkAuthentication() {
             if (state.currentUser) {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('portal-wrapper').classList.remove('hidden');
+                document.getElementById('session-user-name').textContent = state.currentUser.fullname;
+                document.getElementById('session-user-role').textContent = state.currentUser.role;
+
+                buildHeaderNavigation();
+                switchTab('pos');
             } else {
                 document.getElementById('login-screen').classList.remove('hidden');
                 document.getElementById('portal-wrapper').classList.add('hidden');
@@ -725,36 +1241,913 @@
             e.preventDefault();
             const u = document.getElementById('login-username').value.trim();
             const p = document.getElementById('login-password').value;
+
             const matchedUser = state.users.find(usr => usr.username.toLowerCase() === u.toLowerCase() && usr.password === p);
+
             if (matchedUser) {
                 state.currentUser = matchedUser;
                 saveState();
                 checkAuthentication();
-                showToast(`Welcome, ${matchedUser.fullname}!`);
+                writeAudit("USER_LOGIN", `Logged in successfully: ${matchedUser.fullname}`);
+                showToast(`Welcome back, ${matchedUser.fullname}!`);
             } else {
                 showToast("Invalid credentials.", "error");
             }
         }
 
         function handleLogout() {
+            writeAudit("USER_LOGOUT", `Standard logout processed`);
             state.currentUser = null;
             saveState();
             checkAuthentication();
         }
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast max-w-sm p-4 rounded-xl text-xs font-semibold shadow-xl border ${type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`;
-            toast.textContent = message;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+        function buildHeaderNavigation() {
+            const nav = document.getElementById('tab-nav');
+            const role = state.currentUser.role;
+
+            let tabsHTML = `
+                <button onclick="switchTab('pos')" id="tab-pos" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center gap-1 bg-brand-600 text-white flex-shrink-0">
+                    <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                    <span>POS Terminal</span>
+                </button>
+                <button onclick="switchTab('chats')" id="tab-chats" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-md text-brand-300 hover:text-white transition-all flex items-center gap-1 flex-shrink-0">
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                    <span>Chat Hub</span>
+                </button>
+            `;
+
+            if (role === 'Admin') {
+                tabsHTML += `
+                    <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-md text-brand-300 hover:text-white transition-all flex items-center gap-1 flex-shrink-0">
+                        <i data-lucide="package" class="w-4 h-4"></i>
+                        <span>Inventory Stores</span>
+                    </button>
+                    <button onclick="switchTab('debtors')" id="tab-debtors" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-md text-brand-300 hover:text-white transition-all flex items-center gap-1 flex-shrink-0">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>Debt Monitor</span>
+                    </button>
+                    <button onclick="switchTab('sales')" id="tab-sales" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-md text-brand-300 hover:text-white transition-all flex items-center gap-1 flex-shrink-0">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                        <span>Sales Audit</span>
+                    </button>
+                    <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn px-3 py-1.5 text-xs font-semibold rounded-md text-brand-300 hover:text-white transition-all flex items-center gap-1 flex-shrink-0">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span>Administration</span>
+                    </button>
+                `;
+            }
+
+            nav.innerHTML = tabsHTML;
+            lucide.createIcons();
         }
 
-        function applyBrandConfiguration() {
-            const p = state.profile;
-            document.getElementById('header-biz-name').textContent = p.name;
-            document.getElementById('header-biz-contact').textContent = 'Contact: ' + p.phone;
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('bg-brand-600', 'text-white');
+                b.classList.add('text-brand-300', 'hover:text-white');
+            });
+
+            const activePane = document.getElementById(`pane-${tabId}`);
+            if (activePane) activePane.classList.remove('hidden');
+
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-brand-300', 'hover:text-white');
+                activeBtn.classList.add('bg-brand-600', 'text-white');
+            }
+
+            renderViewByTab(tabId);
+        }
+
+        function renderViewByTab(tabId) {
+            if (tabId === 'pos') {
+                renderPOSCatalog();
+                renderPOSCart();
+                populateDebtorSelector();
+            } else if (tabId === 'inventory') {
+                renderInventoryAvailableTable();
+                renderInventoryBalancingTable();
+            } else if (tabId === 'debtors') {
+                renderDebtorsLedger();
+            } else if (tabId === 'sales') {
+                renderSalesMetrics();
+            } else if (tabId === 'settings') {
+                renderAdminControlPanels();
+            } else if (tabId === 'chats') {
+                renderChatsEngine();
+            }
+            lucide.createIcons();
+        }
+
+        // ==================== POS SYSTEM ====================
+        function renderPOSCatalog() {
+            const tbody = document.getElementById('pos-table-catalog');
+            const searchVal = document.getElementById('pos-search').value.toLowerCase().trim();
+            tbody.innerHTML = '';
+
+            const filtered = state.products.filter(p => {
+                const matchesSearch = (p.brand && p.brand.toLowerCase().includes(searchVal)) || 
+                                      (p.model && p.model.toLowerCase().includes(searchVal));
+                const inStock = p.quantity > 0;
+                return matchesSearch && inStock;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">No active products in stock.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-violet-50/30";
+                tr.innerHTML = `
+                    <td class="p-4 font-bold text-slate-900">${p.brand || 'N/A'}</td>
+                    <td class="p-4 font-bold text-brand-600">${p.model || 'N/A'}</td>
+                    <td class="p-4 text-slate-600 font-medium">${p.quantity} ${p.units}</td>
+                    <td class="p-4 font-mono font-bold text-right text-accent-600">UGX ${Number(p.selling).toLocaleString()}</td>
+                    <td class="p-4 text-right">
+                        <button onclick="addToCart('${p.id}')" class="bg-brand-950 hover:bg-brand-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+                            Add to Cart
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addToCart(id) {
+            const p = state.products.find(item => item.id === id);
+            if (!p) return;
+
+            const existing = state.cart.find(c => c.id === id);
+            if (existing) {
+                if (existing.qty < p.quantity) {
+                    existing.qty += 1;
+                } else {
+                    showToast("No more store quantity left for this product.", "error");
+                }
+            } else {
+                state.cart.push({
+                    id: p.id,
+                    brand: p.brand,
+                    model: p.model,
+                    units: p.units,
+                    selling: p.selling,
+                    cost: p.cost,
+                    transport: p.transport,
+                    qty: 1
+                });
+            }
+            saveState();
+            renderPOSCart();
+        }
+
+        function renderPOSCart() {
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+
+            let totalQty = 0;
+            let totalAmount = 0;
+
+            if (state.cart.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-xs text-slate-400">Basket is empty. Select products from Table 1 list.</div>`;
+                document.getElementById('summary-weight').textContent = '0 PCS';
+                document.getElementById('summary-final').textContent = 'UGX 0';
+                calcChangeDue();
+                return;
+            }
+
+            state.cart.forEach(item => {
+                totalQty += item.qty;
+                totalAmount += (item.selling * item.qty);
+
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between bg-violet-50/50 p-3 rounded-xl border border-violet-100 text-xs";
+                div.innerHTML = `
+                    <div class="space-y-0.5">
+                        <div class="font-bold text-slate-900">${item.brand} ${item.model}</div>
+                        <div class="text-slate-500 font-medium">UGX ${Number(item.selling).toLocaleString()} each</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="updateCartQty('${item.id}', -1)" class="bg-white border border-violet-200 text-slate-700 hover:bg-violet-100 h-6 w-6 rounded flex items-center justify-center font-bold">-</button>
+                        <span class="font-mono font-bold">${item.qty}</span>
+                        <button onclick="updateCartQty('${item.id}', 1)" class="bg-white border border-violet-200 text-slate-700 hover:bg-violet-100 h-6 w-6 rounded flex items-center justify-center font-bold">+</button>
+                        <button onclick="removeFromCart('${item.id}')" class="text-rose-500 hover:text-rose-700 ml-1">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('summary-weight').textContent = `${totalQty} PCS`;
+            document.getElementById('summary-final').textContent = `UGX ${totalAmount.toLocaleString()}`;
+            calcChangeDue();
+            lucide.createIcons();
+        }
+
+        function updateCartQty(id, change) {
+            const cartItem = state.cart.find(c => c.id === id);
+            if (!cartItem) return;
+
+            const originalProduct = state.products.find(p => p.id === id);
+            if (!originalProduct) return;
+
+            const newQty = cartItem.qty + change;
+            if (newQty <= 0) {
+                removeFromCart(id);
+            } else if (newQty <= originalProduct.quantity) {
+                cartItem.qty = newQty;
+                saveState();
+                renderPOSCart();
+            } else {
+                showToast("Max available inventory count exceeded.", "error");
+            }
+        }
+
+        function removeFromCart(id) {
+            state.cart = state.cart.filter(item => item.id !== id);
+            saveState();
+            renderPOSCart();
+        }
+
+        function clearCart() {
+            state.cart = [];
+            document.getElementById('cart-buyer-name').value = '';
+            document.getElementById('cart-serial-number').value = '';
+            document.getElementById('cart-cash-given').value = '';
+            saveState();
+            renderPOSCart();
+            showToast("Basket cleared completely.");
+        }
+
+        function calcChangeDue() {
+            const finalNode = document.getElementById('summary-final').textContent;
+            const total = parseInt(finalNode.replace(/[^0-9]/g, '')) || 0;
+            const given = parseFloat(document.getElementById('cart-cash-given').value) || 0;
+
+            const change = given - total;
+            const display = document.getElementById('cart-change-due');
+            if (change < 0) {
+                display.className = "w-full bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 text-sm font-bold font-mono text-rose-700";
+                display.textContent = `Short: UGX ${Math.abs(change).toLocaleString()}`;
+            } else {
+                display.className = "w-full bg-violet-100/50 border border-violet-200 rounded-lg px-3 py-2 text-sm font-bold font-mono text-slate-700";
+                display.textContent = `UGX ${change.toLocaleString()}`;
+            }
+        }
+
+        function toggleCartDebtorSelect() {
+            const paymentType = document.getElementById('cart-payment-type').value;
+            const container = document.getElementById('cart-debtor-container');
+            if (paymentType === 'On Credit') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        // Rest of the supporting functions maintained exactly as originally written...
+        function populateDebtorSelector() {
+            const select = document.getElementById('cart-debtor-select');
+            if (!select) return;
+            select.innerHTML = '';
+            state.debtors.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d.id;
+                opt.textContent = `[${d.id}] ${d.name} (${d.phone})`;
+                select.appendChild(opt);
+            });
+        }
+
+        function checkoutCart() {
+            if (state.cart.length === 0) {
+                showToast("Cannot checkout empty cart.", "error");
+                return;
+            }
+
+            const paymentType = document.getElementById('cart-payment-type').value;
+            const buyerName = document.getElementById('cart-buyer-name').value.trim() || "Walk-in Customer";
+            const serialNum = document.getElementById('cart-serial-number').value.trim() || "N/A";
+            
+            const finalNode = document.getElementById('summary-final').textContent;
+            const totalCost = parseInt(finalNode.replace(/[^0-9]/g, '')) || 0;
+            const given = parseFloat(document.getElementById('cart-cash-given').value) || 0;
+
+            if (paymentType === "On Credit") {
+                const debtorId = document.getElementById('cart-debtor-select').value;
+                const selectedDebtor = state.debtors.find(d => d.id === debtorId);
+                
+                if (!selectedDebtor || state.debtors.length === 0) {
+                    showToast("Error: No debtor account found. A debtor profile is required to proceed.", "error");
+                    openQuickDebtorModal();
+                    return;
+                }
+
+                const invoiceId = 'INV-' + Math.floor(Math.random() * 90000 + 10000);
+                const actualDebtOwed = totalCost - given;
+
+                selectedDebtor.balance += actualDebtOwed;
+                selectedDebtor.pendingInvoices.push({
+                    id: invoiceId,
+                    items: JSON.parse(JSON.stringify(state.cart)),
+                    total: totalCost,
+                    givenAmount: given,
+                    remainingDebt: actualDebtOwed,
+                    isComplete: false,
+                    serialNumber: serialNum,
+                    buyer: selectedDebtor.name,
+                    date: new Date().toLocaleDateString()
+                });
+
+                selectedDebtor.history.push({
+                    id: 'h-' + Date.now(),
+                    date: new Date().toLocaleDateString(),
+                    description: `Credit product checkout (${invoiceId}) - Deposited: UGX ${given.toLocaleString()}`,
+                    amount: actualDebtOwed
+                });
+
+                state.cart.forEach(item => {
+                    const originalProduct = state.products.find(p => p.id === item.id);
+                    if (originalProduct) {
+                        originalProduct.quantity = Math.max(0, originalProduct.quantity - item.qty);
+                    }
+                });
+
+                state.cart = [];
+                document.getElementById('cart-buyer-name').value = '';
+                document.getElementById('cart-serial-number').value = '';
+                document.getElementById('cart-cash-given').value = '';
+                
+                saveState();
+                showToast("Item taken on debt. Recorded to directory ledger. No receipt generated.", "info");
+                writeAudit("CREDIT_HELD_SUCCESS", `Stock isolated for invoice ${invoiceId} under profile ${selectedDebtor.name}. Assessed initial deposit: UGX ${given}`);
+                renderViewByTab('pos');
+                return;
+            }
+
+            if ((paymentType === "Cash" || paymentType === "Mobile Money") && given < totalCost) {
+                showToast("Transaction Failed: Provided cash amount must cover the checkout total price.", "error");
+                return;
+            }
+
+            let checkoutError = false;
+            state.cart.forEach(item => {
+                const originalProduct = state.products.find(p => p.id === item.id);
+                if (!originalProduct || originalProduct.quantity < item.qty) {
+                    checkoutError = true;
+                }
+            });
+
+            if (checkoutError) {
+                showToast("Store stock levels changed. Refreshing catalog.", "error");
+                renderPOSCatalog();
+                return;
+            }
+
+            let profitTotal = 0;
+            state.cart.forEach(item => {
+                const originalProduct = state.products.find(p => p.id === item.id);
+                if (originalProduct) {
+                    originalProduct.quantity = Math.max(0, originalProduct.quantity - item.qty);
+                    const finalUnitCost = originalProduct.cost + (originalProduct.transport || 0);
+                    profitTotal += Math.max(0, (item.selling - finalUnitCost) * item.qty);
+                }
+            });
+
+            const invoiceId = 'INV-' + Math.floor(Math.random() * 90000 + 10000);
+            const changeVal = given - totalCost;
+
+            const newSale = {
+                id: invoiceId,
+                servedBy: state.currentUser.fullname,
+                buyer: buyerName,
+                serialNumber: serialNum,
+                items: JSON.parse(JSON.stringify(state.cart)),
+                revenue: totalCost,
+                profit: profitTotal,
+                paymentType: paymentType,
+                amountGiven: given,
+                changeDue: Math.max(0, changeVal),
+                timestamp: new Date().toLocaleString()
+            };
+
+            state.sales.unshift(newSale);
+            state.cart = [];
+            document.getElementById('cart-buyer-name').value = '';
+            document.getElementById('cart-serial-number').value = '';
+            document.getElementById('cart-cash-given').value = '';
+            
+            saveState();
+            showToast("Sale finalized successfully!");
+            writeAudit("SALE_EXECUTED", `Invoice ${invoiceId} generated successfully.`);
+
+            openInvoiceModal(newSale);
+            renderViewByTab('pos');
+        }
+
+        // ==================== INVENTORY TABLES ====================
+        function renderInventoryAvailableTable() {
+            const tbody = document.getElementById('inventory-table-available');
+            tbody.innerHTML = '';
+
+            let grandTotalQuantity = 0;
+            let grandTotalExpectedProfit = 0;
+            let grandTotalSellingPrice = 0;
+
+            if (state.products.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-slate-400">Inventory list is empty.</td></tr>`;
+                document.getElementById('inventory-table-available-footer').innerHTML = '';
+                return;
+            }
+
+            state.products.forEach(p => {
+                const transportCost = p.transport || 0;
+                const baseCost = p.cost || 0;
+                const totalUnits = p.quantity || 0;
+                const finalUnitCost = Math.round(baseCost + transportCost);
+                const potentialUnitProfit = Math.max(0, p.selling - finalUnitCost);
+                const cumulativePotentialProfit = potentialUnitProfit * totalUnits;
+
+                grandTotalQuantity += totalUnits;
+                grandTotalExpectedProfit += cumulativePotentialProfit;
+                grandTotalSellingPrice += (p.selling * totalUnits);
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-violet-50/30";
+                tr.innerHTML = `
+                    <td class="p-4 font-bold text-slate-900">${p.brand}</td>
+                    <td class="p-4 font-bold text-brand-600">${p.model}</td>
+                    <td class="p-4 text-slate-600 font-medium">${totalUnits} ${p.units}</td>
+                    <td class="p-4 font-mono text-slate-600">UGX ${baseCost.toLocaleString()}</td>
+                    <td class="p-4 font-mono text-slate-600">UGX ${transportCost.toLocaleString()}</td>
+                    <td class="p-4 font-mono font-bold text-brand-900">UGX ${finalUnitCost.toLocaleString()}</td>
+                    <td class="p-4 font-mono font-bold text-accent-600">UGX ${p.selling.toLocaleString()}</td>
+                    <td class="p-4 font-mono font-bold text-right text-emerald-600">UGX ${cumulativePotentialProfit.toLocaleString()}</td>
+                    <td class="p-4 text-right flex justify-end gap-2">
+                        <button onclick="editProduct('${p.id}')" class="text-brand-600 hover:text-brand-900 p-1"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                        <button onclick="deleteProduct('${p.id}')" class="text-rose-600 hover:text-rose-900 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const footer = document.getElementById('inventory-table-available-footer');
+            footer.innerHTML = `
+                <tr class="bg-violet-100/60 font-bold border-t border-violet-200">
+                    <td class="p-4" colspan="2">TOTALS</td>
+                    <td class="p-4 text-brand-950 font-bold">${grandTotalQuantity} Units</td>
+                    <td class="p-4" colspan="3"></td>
+                    <td class="p-4 text-accent-700 font-bold font-mono text-left">UGX ${grandTotalSellingPrice.toLocaleString()}</td>
+                    <td class="p-4 text-emerald-700 font-bold font-mono text-right" colspan="2">UGX ${grandTotalExpectedProfit.toLocaleString()}</td>
+                </tr>
+            `;
+
+            lucide.createIcons();
+        }
+
+        function renderInventoryBalancingTable() {
+            const tbody = document.getElementById('inventory-table-balancing');
+            tbody.innerHTML = '';
+
+            const balancingMap = {};
+            let grandTotalQuantitySold = 0;
+            let grandTotalProfitContribution = 0;
+
+            state.products.forEach(p => {
+                balancingMap[`${p.brand}-${p.model}`] = {
+                    brand: p.brand,
+                    model: p.model,
+                    qtySold: 0,
+                    cost: p.cost,
+                    transport: p.transport || 0,
+                    finalPrice: p.cost + (p.transport || 0),
+                    selling: p.selling,
+                    totalProfit: 0
+                };
+            });
+
+            state.sales.forEach(sale => {
+                sale.items.forEach(item => {
+                    const key = `${item.brand}-${item.model}`;
+                    if (!balancingMap[key]) {
+                        balancingMap[key] = {
+                            brand: item.brand,
+                            model: item.model,
+                            qtySold: 0,
+                            cost: item.cost || 0,
+                            transport: item.transport || 0,
+                            finalPrice: (item.cost || 0) + (item.transport || 0),
+                            selling: item.selling,
+                            totalProfit: 0
+                        };
+                    }
+                    balancingMap[key].qtySold += item.qty;
+                });
+            });
+
+            let entries = Object.values(balancingMap);
+            if (entries.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-slate-400">No active transactions processed.</td></tr>`;
+                document.getElementById('inventory-table-balancing-footer').innerHTML = '';
+                return;
+            }
+
+            entries.forEach(e => {
+                const actualProfitContribution = Math.max(0, (e.selling - e.finalPrice) * e.qtySold);
+                grandTotalQuantitySold += e.qtySold;
+                grandTotalProfitContribution += actualProfitContribution;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-violet-50/30";
+                tr.innerHTML = `
+                    <td class="p-4 font-bold text-slate-900">${e.brand}</td>
+                    <td class="p-4 font-bold text-brand-600">${e.model}</td>
+                    <td class="p-4 text-slate-600 font-bold">${e.qtySold} Units</td>
+                    <td class="p-4 font-mono text-slate-600">UGX ${e.cost.toLocaleString()}</td>
+                    <td class="p-4 font-mono text-slate-600">UGX ${e.transport.toLocaleString()}</td>
+                    <td class="p-4 font-mono font-bold text-brand-900">UGX ${e.finalPrice.toLocaleString()}</td>
+                    <td class="p-4 font-mono font-bold text-accent-600">UGX ${e.selling.toLocaleString()}</td>
+                    <td class="p-4 font-mono font-bold text-right text-emerald-600 font-mono">UGX ${actualProfitContribution.toLocaleString()}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const footer = document.getElementById('inventory-table-balancing-footer');
+            footer.innerHTML = `
+                <tr class="bg-violet-100/60 font-bold border-t border-violet-200">
+                    <td class="p-4" colspan="2">TOTALS</td>
+                    <td class="p-4 text-brand-950 font-bold">${grandTotalQuantitySold} Sold</td>
+                    <td class="p-4" colspan="4"></td>
+                    <td class="p-4 text-emerald-700 font-bold font-mono text-right">UGX ${grandTotalProfitContribution.toLocaleString()}</td>
+                </tr>
+            `;
+        }
+
+        function deleteAllInventoryItems() {
+            if (confirm("⚠️ WARNING: Are you absolutely sure you want to delete ALL inventory items? This action cannot be undone.")) {
+                state.products = [];
+                saveState();
+                writeAudit("ALL_INVENTORY_DELETED", "All products deleted from stores.");
+                renderViewByTab('inventory');
+                showToast("All inventory items deleted.", "success");
+            }
+        }
+
+        function openProductModal() {
+            document.getElementById('modal-product-title').textContent = "Add New Item";
+            document.getElementById('product-form').reset();
+            document.getElementById('prod-id').value = '';
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        function editProduct(id) {
+            const p = state.products.find(item => item.id === id);
+            if (!p) return;
+
+            document.getElementById('modal-product-title').textContent = "Edit Store Item";
+            document.getElementById('prod-id').value = p.id;
+            document.getElementById('prod-brand').value = p.brand;
+            document.getElementById('prod-model').value = p.model;
+            document.getElementById('prod-quantity').value = p.quantity;
+            document.getElementById('prod-units').value = p.units;
+            document.getElementById('prod-cost').value = p.cost;
+            document.getElementById('prod-transport').value = p.transport || 0;
+            document.getElementById('prod-finalprice').value = p.finalprice;
+            document.getElementById('prod-selling').value = p.selling;
+
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('prod-id').value;
+            const brand = document.getElementById('prod-brand').value.trim();
+            const model = document.getElementById('prod-model').value.trim();
+            const qty = parseInt(document.getElementById('prod-quantity').value) || 0;
+            const units = document.getElementById('prod-units').value;
+            const cost = parseFloat(document.getElementById('prod-cost').value) || 0;
+            const transport = parseFloat(document.getElementById('prod-transport').value) || 0;
+            const finalPrice = parseFloat(document.getElementById('prod-finalprice').value) || cost;
+            const selling = parseFloat(document.getElementById('prod-selling').value) || 0;
+
+            if (id) {
+                const index = state.products.findIndex(p => p.id === id);
+                if (index !== -1) {
+                    state.products[index] = { id, brand, model, quantity: qty, units, cost, transport, finalprice: finalPrice, selling };
+                    showToast("Store inventory item updated.");
+                    writeAudit("PRODUCT_UPDATED", `Updated stock for ${brand} ${model}`);
+                }
+            } else {
+                const newId = 'p-' + Date.now();
+                state.products.push({ id: newId, brand, model, quantity: qty, units, cost, transport, finalprice: finalPrice, selling });
+                showToast("New store item created.");
+                writeAudit("PRODUCT_CREATED", `Added new product ${brand} ${model}`);
+            }
+
+            saveState();
+            closeProductModal();
+            renderViewByTab('inventory');
+        }
+
+        function deleteProduct(id) {
+            if (confirm("Delete this inventory item?")) {
+                const matched = state.products.find(p => p.id === id);
+                state.products = state.products.filter(p => p.id !== id);
+                saveState();
+                showToast("Item deleted.");
+                if (matched) writeAudit("PRODUCT_DELETED", `Removed ${matched.brand} ${matched.model}`);
+                renderViewByTab('inventory');
+            }
+        }
+
+        // ==================== DEBTOR LEDGERS ====================
+        function getNextDebtorId() {
+            for(let i = 1; i <= 100; i++) {
+                let targetId = "D" + i;
+                if (!state.debtors.some(d => d.id === targetId)) {
+                    return targetId;
+                }
+            }
+            return "D" + (state.debtors.length + 1);
+        }
+
+        function renderDebtorsLedger() {
+            const tbody = document.getElementById('debtor-table-rows');
+            const search = document.getElementById('debtor-search').value.toLowerCase().trim();
+            tbody.innerHTML = '';
+
+            const filtered = state.debtors.filter(d => d.name.toLowerCase().includes(search));
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400">No debtor accounts matching criteria.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(d => {
+                const displayBalance = Math.max(0, d.balance);
+                const displayReserved = Math.max(0, d.reservedBalance || 0);
+
+                const statusClass = displayBalance > 1000000 ? 'bg-rose-100 text-rose-800 border-rose-200' :
+                                    displayBalance > 0 ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                const statusLabel = displayBalance > 1000000 ? 'HIGH RISK' : displayBalance > 0 ? 'ACTIVE DEBT' : 'CLEARED';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-violet-50/30 text-xs";
+                tr.innerHTML = `
+                    <td class="p-4 font-bold text-brand-950 font-mono">${d.id}</td>
+                    <td class="p-4 text-slate-500 font-medium">${d.dateAdded || 'N/A'}</td>
+                    <td class="p-4">
+                        <div class="font-bold text-slate-900">${d.name}</div>
+                        <div class="text-slate-500 text-[10px]">${d.phone}</div>
+                    </td>
+                    <td class="p-4">
+                        <span class="px-2 py-0.5 font-bold rounded-full border text-[9px] ${statusClass}">${statusLabel}</span>
+                    </td>
+                    <td class="p-4 font-mono font-bold text-slate-600">
+                        <div class="flex items-center gap-1.5">
+                            <span>UGX ${displayReserved.toLocaleString()}</span>
+                            ${displayReserved > 0 ? `<button onclick="clearReservedFunds('${d.id}')" title="Customer returns to pick cash balance" class="text-[9px] bg-rose-500 hover:bg-rose-600 text-white px-1.5 py-0.5 rounded font-bold transition-all">Clear Balance</button>` : ''}
+                        </div>
+                    </td>
+                    <td class="p-4 font-mono font-bold text-brand-900">UGX ${displayBalance.toLocaleString()}</td>
+                    <td class="p-4 text-right flex justify-end gap-1 items-center">
+                        <button onclick="openDebtPayModal('${d.id}')" class="bg-violet-100 hover:bg-violet-200 text-brand-700 font-bold px-2 py-1 rounded text-[10px]">Settle</button>
+                        <button onclick="triggerDebtorAlert('${d.id}', 'whatsapp')" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 p-1 rounded" title="Notify via WhatsApp"><i data-lucide="share-2" class="w-3.5 h-3.5"></i></button>
+                        <button onclick="triggerDebtorAlert('${d.id}', 'sms')" class="bg-blue-50 text-blue-700 hover:bg-blue-100 p-1 rounded" title="Notify via SMS"><i data-lucide="message-square" class="w-3.5 h-3.5"></i></button>
+                        <button onclick="deleteDebtorAccount('${d.id}')" class="text-rose-600 hover:text-rose-900 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        function triggerDebtorAlert(id, channel) {
+            const debtor = state.debtors.find(d => d.id === id);
+            if (!debtor) return;
+            showToast(`Notification statement queued out to ${debtor.name} via ${channel.toUpperCase()} successfully.`);
+            writeAudit("DEBTOR_NOTIFIED", `Sent payment reminder to ${debtor.name} using ${channel.toUpperCase()}`);
+        }
+
+        function clearReservedFunds(id) {
+            const debtor = state.debtors.find(d => d.id === id);
+            if (!debtor) return;
+            const currentReserved = Math.max(0, debtor.reservedBalance || 0);
+            if (confirm(`Clear and pay out the reserved balance of UGX ${currentReserved.toLocaleString()} to customer ${debtor.name}?`)) {
+                debtor.reservedBalance = 0;
+                saveState();
+                renderDebtorsLedger();
+                showToast("Reserved balance cleared and paid back to customer.");
+                writeAudit("RESERVED_BALANCE_CLEARED", `Paid out UGX ${currentReserved.toLocaleString()} to customer ${debtor.name}`);
+            }
+        }
+
+        function openQuickDebtorModal() {
+            document.getElementById('quick-debtor-id-preview').value = getNextDebtorId();
+            document.getElementById('quick-debtor-name').value = '';
+            document.getElementById('quick-debtor-phone').value = '';
+            document.getElementById('debtor-modal').classList.remove('hidden');
+        }
+
+        function closeQuickDebtorModal() {
+            document.getElementById('debtor-modal').classList.add('hidden');
+        }
+
+        function saveQuickDebtor(e) {
+            e.preventDefault();
+            const name = document.getElementById('quick-debtor-name').value.trim();
+            const phone = document.getElementById('quick-debtor-phone').value.trim();
+            const assignedId = getNextDebtorId();
+
+            const newDebtor = {
+                id: assignedId,
+                name,
+                phone,
+                balance: 0,
+                reservedBalance: 0,
+                dateAdded: new Date().toLocaleDateString(),
+                pendingInvoices: [],
+                history: []
+            };
+
+            state.debtors.push(newDebtor);
+            saveState();
+            closeQuickDebtorModal();
+            populateDebtorSelector();
+            if (state.currentUser.role === 'Admin') renderDebtorsLedger();
+            showToast(`Debtor registered under sequential ID: ${assignedId}`);
+            writeAudit("DEBTOR_REGISTERED", `New debtor profile created: ${name} with ID ${assignedId}`);
+        }
+
+        function deleteDebtorAccount(id) {
+            if (confirm("Permanently delete this debtor ledger?")) {
+                const matched = state.debtors.find(d => d.id === id);
+                state.debtors = state.debtors.filter(d => d.id !== id);
+                saveState();
+                showToast("Debtor deleted.");
+                if (matched) writeAudit("DEBTOR_DELETED", `Removed debtor ${matched.name}`);
+                renderDebtorsLedger();
+            }
+        }
+
+        function openDebtPayModal(debtorId) {
+            const debtor = state.debtors.find(d => d.id === debtorId);
+            if (!debtor) return;
+
+            document.getElementById('debt-pay-id').value = debtor.id;
+            document.getElementById('debt-audit-title').textContent = `Settle: ${debtor.name}`;
+            document.getElementById('debt-audit-subtitle').textContent = `Outstanding Balance: UGX ${Math.max(0, debtor.balance).toLocaleString()}`;
+
+            const invoiceSelect = document.getElementById('debt-pay-invoice-select');
+            invoiceSelect.innerHTML = '';
+
+            const activeInvoices = debtor.pendingInvoices.filter(inv => !inv.isComplete);
+            if (activeInvoices.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.textContent = "No unpaid invoices found.";
+                invoiceSelect.appendChild(opt);
+            } else {
+                activeInvoices.forEach(inv => {
+                    const opt = document.createElement('option');
+                    opt.value = inv.id;
+                    opt.textContent = `${inv.id} - Total: UGX ${inv.total.toLocaleString()} (Owed: UGX ${Math.max(0, inv.remainingDebt).toLocaleString()})`;
+                    invoiceSelect.appendChild(opt);
+                });
+            }
+
+            autoFillDebtAmount();
+            renderDebtHistory(debtor);
+            document.getElementById('debt-pay-modal').classList.remove('hidden');
+        }
+
+        function closeDebtPayModal() {
+            document.getElementById('debt-pay-modal').classList.add('hidden');
+        }
+
+        function autoFillDebtAmount() {
+            const select = document.getElementById('debt-pay-invoice-select');
+            const selectedInvoiceId = select.value;
+            const debtorId = document.getElementById('debt-pay-id').value;
+            const debtor = state.debtors.find(d => d.id === debtorId);
+            const amountInput = document.getElementById('debt-pay-amount');
+
+            if (!debtor || !selectedInvoiceId) {
+                amountInput.value = "";
+                return;
+            }
+
+            const invoice = debtor.pendingInvoices.find(inv => inv.id === selectedInvoiceId);
+            if (invoice) {
+                amountInput.value = Math.max(0, invoice.remainingDebt);
+            }
+        }
+
+        function renderDebtHistory(debtor) {
+            const container = document.getElementById('debt-pay-history');
+            container.innerHTML = '';
+            if (!debtor.history || debtor.history.length === 0) {
+                container.innerHTML = `<div class="p-4 text-center text-slate-400">No payment logs registered.</div>`;
+                return;
+            }
+
+            debtor.history.forEach(h => {
+                const div = document.createElement('div');
+                div.className = "p-2 flex justify-between items-center bg-slate-50";
+                div.innerHTML = `
+                    <div>
+                        <div class="font-bold text-slate-900">${h.description}</div>
+                        <div class="text-[10px] text-slate-400">${h.date}</div>
+                    </div>
+                    <div class="font-mono font-bold text-brand-900">UGX ${Math.max(0, h.amount).toLocaleString()}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function postInstallmentPayment(e) {
+            e.preventDefault();
+            const debtorId = document.getElementById('debt-pay-id').value;
+            const selectedInvoiceId = document.getElementById('debt-pay-invoice-select').value;
+            const rawAmount = parseFloat(document.getElementById('debt-pay-amount').value) || 0;
+
+            const debtor = state.debtors.find(d => d.id === debtorId);
+            if (!debtor) return;
+
+            const invoice = debtor.pendingInvoices.find(inv => inv.id === selectedInvoiceId);
+            if (!invoice) {
+                showToast("Select a valid unpaid invoice entry.", "error");
+                return;
+            }
+
+            if (rawAmount <= 0) {
+                showToast("Please enter a valid payment amount.", "error");
+                return;
+            }
+
+            let appliedPayment = rawAmount;
+            let changeOrOverpayment = 0;
+
+            if (appliedPayment > invoice.remainingDebt) {
+                changeOrOverpayment = appliedPayment - invoice.remainingDebt;
+                appliedPayment = invoice.remainingDebt;
+                debtor.reservedBalance = (debtor.reservedBalance || 0) + changeOrOverpayment;
+                showToast(`Excess payment of UGX ${changeOrOverpayment.toLocaleString()} added to Reserved Balance.`, "info");
+            }
+
+            invoice.remainingDebt = Math.max(0, invoice.remainingDebt - appliedPayment);
+            debtor.balance = Math.max(0, debtor.balance - appliedPayment);
+
+            debtor.history.push({
+                id: 'h-' + Date.now(),
+                date: new Date().toLocaleDateString(),
+                description: `Debt installment payment (${invoice.id})`,
+                amount: appliedPayment
+            });
+
+            if (invoice.remainingDebt <= 0) {
+                invoice.isComplete = true;
+
+                let calculatedProfit = 0;
+                invoice.items.forEach(item => {
+                    const matchedProd = state.products.find(p => p.id === item.id);
+                    const costBasis = matchedProd ? (matchedProd.cost + (matchedProd.transport || 0)) : (item.cost + (item.transport || 0));
+                    calculatedProfit += (item.selling - costBasis) * item.qty;
+                });
+
+                const structuralSaleRecord = {
+                    id: invoice.id,
+                    servedBy: state.currentUser ? state.currentUser.fullname : 'System',
+                    buyer: invoice.buyer || debtor.name,
+                    serialNumber: invoice.serialNumber || 'N/A',
+                    items: invoice.items,
+                    revenue: invoice.total,
+                    profit: calculatedProfit,
+                    paymentType: "On Credit (Settled)",
+                    amountGiven: invoice.total,
+                    changeDue: 0,
+                    timestamp: new Date().toLocaleString()
+                };
+
+                state.sales.unshift(structuralSaleRecord);
+                
+                showToast(`Debt complete! Receipt generated for ${invoice.id}.`);
+                writeAudit("DEBT_SETTLED_COMPLETE", `Invoice ${invoice.id} fully paid off. Moved to sold assets logs.`);
+                
+                openInvoiceModal(structuralSaleRecord);
+            } else {
+                showToast(`Installment processed. Remaining debt: UGX ${invoice.remainingDebt.toLocaleString()}`, "info");
+                writeAudit("DEBT_PARTIAL_PAYMENT", `Partial installment payment of UGX ${appliedPayment.toLocaleString()} under invoice ${invoice.id}`);
+            }
+            renderViewByTab('debtors');
+            closeDebtPayModal();
         }
     </script>
 </body>
