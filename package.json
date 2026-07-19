@@ -1,0 +1,12 @@
+{
+  "name": "msgadgets1",
+  "version": "1.0.0",
+  "description": "MS-GADGETS single-page app for Render deployment",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
