@@ -4,7 +4,8 @@ const path = require('path');
 
 const port = process.env.PORT || 3000;
 const rootDir = __dirname;
-const indexPath = path.join(rootDir, 'index.html');
+// We set your main dashboard as the default landing page
+const mainPage = path.join(rootDir, 'MSGAGDETS1.html');
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -26,7 +27,6 @@ function sendFile(res, filePath) {
       res.end('Not found');
       return;
     }
-
     const ext = path.extname(filePath).toLowerCase();
     const contentType = mimeTypes[ext] || 'application/octet-stream';
     res.writeHead(200, { 'Content-Type': contentType });
@@ -38,23 +38,23 @@ const server = http.createServer((req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = decodeURIComponent(requestUrl.pathname);
 
+  // If user visits the homepage, serve your main dashboard
   if (pathname === '/') {
-    sendFile(res, indexPath);
+    sendFile(res, mainPage);
     return;
   }
 
+  // Sanitize path to prevent security issues
   const safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
   const requestedPath = path.join(rootDir, safePath);
 
-  if (!requestedPath.startsWith(rootDir)) {
-    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('Forbidden');
-    return;
+  // Check if file exists and serve it
+  if (fs.existsSync(requestedPath) && fs.statSync(requestedPath).isFile()) {
+    sendFile(res, requestedPath);
+  } else {
+    // If file isn't found, try to redirect to main page or return 404
+    sendFile(res, mainPage); 
   }
-
-  fs.existsSync(requestedPath) && fs.statSync(requestedPath).isFile()
-    ? sendFile(res, requestedPath)
-    : sendFile(res, indexPath);
 });
 
 server.listen(port, () => {
