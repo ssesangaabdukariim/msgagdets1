@@ -43,8 +43,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  const safePath = path.normalize(pathname).replace(/^\.(\.(\/)?)?
-/, '');
+  const safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
   const requestedPath = path.join(rootDir, safePath);
 
   if (!requestedPath.startsWith(rootDir)) {
